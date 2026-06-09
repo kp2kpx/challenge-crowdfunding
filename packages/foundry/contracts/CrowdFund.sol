@@ -5,6 +5,13 @@ import "./FundingRecipient.sol";
 
 contract CrowdFund {
     //////////////////////
+    /// Custom Errors ////
+    //////////////////////
+
+    error TooEarly();
+    error NotOpenToWithdraw();
+
+    //////////////////////
     /// State Variables //
     //////////////////////
 
@@ -24,8 +31,8 @@ contract CrowdFund {
     /// Constructor ///
     ///////////////////
 
-    constructor(address fundingRecipientAddress, uint256 _deadline, uint256 _fundingGoal) {
-        fundingRecipient = FundingRecipient(fundingRecipientAddress);
+    constructor(uint256 _deadline, uint256 _fundingGoal) {
+        fundingRecipient = new FundingRecipient();
         deadline = _deadline;
         fundingGoal = _fundingGoal;
     }
@@ -40,7 +47,7 @@ contract CrowdFund {
     }
 
     function withdraw() public {
-        require(openToWithdraw, "Not open to withdraw");
+        if (!openToWithdraw) revert NotOpenToWithdraw();
 
         uint256 amount = balances[msg.sender];
         balances[msg.sender] = 0;
@@ -50,7 +57,7 @@ contract CrowdFund {
     }
 
     function execute() public {
-        require(block.timestamp > deadline, "Campaign not ended");
+        if (block.timestamp <= deadline) revert TooEarly();
 
         if (address(this).balance >= fundingGoal) {
             fundingRecipient.complete{value: address(this).balance}();

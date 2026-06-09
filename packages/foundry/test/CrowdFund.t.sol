@@ -13,8 +13,9 @@ contract CrowdFundTest is Test {
     address public user2;
 
     function setUp() public {
-        fundingRecipient = new FundingRecipient();
-        crowdFund = ICrowdFund(address(new CrowdFund(address(fundingRecipient), block.timestamp + 48 hours, 1 ether)));
+        CrowdFund cf = new CrowdFund(block.timestamp + 48 hours, 1 ether);
+        fundingRecipient = cf.fundingRecipient();
+        crowdFund = ICrowdFund(address(cf));
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
         vm.deal(user1, 10 ether);
