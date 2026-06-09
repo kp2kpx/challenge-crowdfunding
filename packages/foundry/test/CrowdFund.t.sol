@@ -13,8 +13,8 @@ contract CrowdFundTest is Test {
     address public user2;
 
     function setUp() public {
-        CrowdFund cf = new CrowdFund(block.timestamp + 48 hours, 1 ether);
-        fundingRecipient = cf.fundingRecipient();
+        fundingRecipient = new FundingRecipient();
+        CrowdFund cf = new CrowdFund(address(fundingRecipient));
         crowdFund = ICrowdFund(address(cf));
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
@@ -194,7 +194,7 @@ contract CrowdFundTest is Test {
         vm.prank(user1);
         crowdFund.contribute{ value: 1 ether }();
 
-        vm.warp(block.timestamp + 72 hours);
+        vm.warp(block.timestamp + 31 days);
 
         uint256 timeLeft2 = crowdFund.timeLeft();
         assertEq(timeLeft2, 0, "timeLeft not equal to 0. Did you implement timeLeft() correctly?");
@@ -213,7 +213,7 @@ contract CrowdFundTest is Test {
         vm.prank(user2);
         crowdFund.contribute{ value: 0.001 ether }();
 
-        vm.warp(block.timestamp + 72 hours);
+        vm.warp(block.timestamp + 31 days);
 
         crowdFund.execute();
 

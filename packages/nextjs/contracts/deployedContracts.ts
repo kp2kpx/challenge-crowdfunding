@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   11155111: {
     FundingRecipient: {
-      address: "0x2d188e580550eaa6464401cbaeecd87e18e83bb1",
+      address: "0x656bdE4BCE71E3B7269566fD81fd1FA17d129962",
       abi: [
         {
           type: "function",
@@ -31,28 +31,18 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11027424,
+      deployedOnBlock: 11030758,
     },
     CrowdFund: {
-      address: "0xcd7e2ca9bc0294eb8fe3363fbec0631b7dff7a50",
+      address: "0xD43b35b42dFfd40D0Ce5d43d114f3Cb7b8e459EC",
       abi: [
         {
           type: "constructor",
           inputs: [
             {
-              name: "fundingRecipientAddress",
+              name: "_fundingRecipientAddress",
               type: "address",
               internalType: "address",
-            },
-            {
-              name: "_deadline",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "_fundingGoal",
-              type: "uint256",
-              internalType: "uint256",
             },
           ],
           stateMutability: "nonpayable",
@@ -109,19 +99,6 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "fundingGoal",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
           name: "fundingRecipient",
           inputs: [],
           outputs: [
@@ -142,6 +119,19 @@ const deployedContracts = {
               name: "",
               type: "bool",
               internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "threshold",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
             },
           ],
           stateMutability: "view",
@@ -187,7 +177,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 11027424,
+      deployedOnBlock: 11030758,
     },
   },
 } as const;

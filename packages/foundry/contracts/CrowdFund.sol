@@ -5,19 +5,20 @@ import "./FundingRecipient.sol";
 
 contract CrowdFund {
     //////////////////////
-    /// Custom Errors ////
+    /// Errors ///////////
     //////////////////////
 
-    error TooEarly();
     error NotOpenToWithdraw();
+    error WithdrawTransferFailed(address to, uint256 amount);
+    error TooEarly(uint256 deadline, uint256 currentTimestamp);
 
     //////////////////////
     /// State Variables //
     //////////////////////
 
     FundingRecipient public fundingRecipient;
-    uint256 public deadline;
-    uint256 public fundingGoal;
+    uint256 public deadline = block.timestamp + 30 seconds;
+    uint256 public constant threshold = 1 ether;
     bool public openToWithdraw;
     mapping(address => uint256) public balances;
 
@@ -25,16 +26,14 @@ contract CrowdFund {
     /// Events /////
     ////////////////
 
-    event Contribution(address contributor, uint256 amount);
+    event Contribution(address, uint256);
 
     ///////////////////
     /// Constructor ///
     ///////////////////
 
-    constructor(uint256 _deadline, uint256 _fundingGoal) {
-        fundingRecipient = new FundingRecipient();
-        deadline = _deadline;
-        fundingGoal = _fundingGoal;
+    constructor(address _fundingRecipientAddress) {
+        fundingRecipient = FundingRecipient(_fundingRecipientAddress);
     }
 
     ///////////////////
@@ -49,17 +48,17 @@ contract CrowdFund {
     function withdraw() public {
         if (!openToWithdraw) revert NotOpenToWithdraw();
 
-        uint256 amount = balances[msg.sender];
+        uint256 balance = balances[msg.sender];
         balances[msg.sender] = 0;
 
-        (bool success,) = msg.sender.call{value: amount}("");
-        require(success, "Transfer failed");
+        (bool success,) = msg.sender.call{value: balance}("");
+        if (!success) revert WithdrawTransferFailed(msg.sender, balance);
     }
 
     function execute() public {
-        if (block.timestamp <= deadline) revert TooEarly();
+        if (block.timestamp <= deadline) revert TooEarly(deadline, block.timestamp);
 
-        if (address(this).balance >= fundingGoal) {
+        if (address(this).balance >= threshold) {
             fundingRecipient.complete{value: address(this).balance}();
         } else {
             openToWithdraw = true;
@@ -67,8 +66,7 @@ contract CrowdFund {
     }
 
     receive() external payable {
-        balances[msg.sender] += msg.value;
-        emit Contribution(msg.sender, msg.value);
+        contribute();
     }
 
     ////////////////////////

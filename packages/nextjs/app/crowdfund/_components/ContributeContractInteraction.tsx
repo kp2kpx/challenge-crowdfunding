@@ -22,7 +22,7 @@ export const ContributeContractInteraction = ({ address }: { address?: string })
 
   const { data: fundingGoal } = useScaffoldReadContract({
     contractName: "CrowdFund",
-    functionName: "fundingGoal",
+    functionName: "threshold",
     watch: true,
   });
 
